@@ -24,4 +24,6 @@ defmodule VirtualOfficeWeb.Router do
       live_dashboard "/dashboard", metrics: VirtualOfficeWeb.Telemetry
     end
   end
+
+  # test
 end
