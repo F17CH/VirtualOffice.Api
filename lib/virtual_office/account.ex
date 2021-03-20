@@ -8,6 +8,8 @@ defmodule VirtualOffice.Account do
 
   alias VirtualOffice.Account.User
 
+  alias VirtualOffice.Guardian
+
   @doc """
   Returns the list of users.
 
@@ -102,21 +104,40 @@ defmodule VirtualOffice.Account do
     User.changeset(user, attrs)
   end
 
-  def authenticate_user(email, password) do
-    query = from(u in User, where: u.email == ^email)
-    query |> Repo.one() |> verify_password(password)
+  def token_sign_in(email, password) do
+    case email_password_auth(email, password) do
+      {:ok, user} ->
+        Guardian.encode_and_sign(user)
+        _ ->
+          {:error, :unauthorized}
+    end
   end
 
-  defp verify_password(nil, _) do
+  defp email_password_auth(email, password) when is_binary(email) and is_binary(password) do
+    with {:ok, user} <- get_by_email(email),
+    do: verify_password(password, user)
+  end
+
+  defp get_by_email(email) when is_binary(email) do
+    case Repo.get_by(User, email: email) do
+      nil ->
+        verify_password(nil)
+        {:error, "Login Error"}
+      user ->
+        {:ok, user}
+    end
+  end
+
+  defp verify_password(nil) do
     Pbkdf2.no_user_verify()
     {:error, "Wrong email or password"}
   end
 
-  defp verify_password(user, password) do
+  defp verify_password(password, %User{} = user) do
     if Pbkdf2.verify_pass(password, user.password_hash) do
       {:ok, user}
     else
-      {:error, "Incorrect Email or Password"}
+      {:error, :invalid_password}
     end
   end
 end

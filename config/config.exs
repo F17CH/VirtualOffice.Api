@@ -32,3 +32,7 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+config :virtual_office, VirtualOffice.Guardian,
+  issues: "virtual_office",
+  secret_key: "kGHXx50/xbrXtc6DzCjJtlti/XS2dDsmbs2Jj368hFhQhc7Jr6GfVDtzviIw7FqZ"

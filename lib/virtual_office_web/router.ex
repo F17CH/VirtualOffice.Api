@@ -1,23 +1,30 @@
 defmodule VirtualOfficeWeb.Router do
   use VirtualOfficeWeb, :router
 
+  alias VirtualOffice.Guardian
+
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_session
   end
 
-  pipeline :api_auth do
-    plug :ensure_authenticated
+  pipeline :jwt_authenticated do
+    plug Guardian.AuthPipeline
   end
+
+
 
   scope "/api", VirtualOfficeWeb do
     pipe_through :api
+
     post "/users/sign_in", UserController, :sign_in
+    post "/users/sign_up", UserController, :create
   end
 
   scope "/api", VirtualOfficeWeb do
-    pipe_through [:api, :api_auth]
-    resources "/users", UserController, except: [:new, :edit]
+    pipe_through [:api, :jwt_authenticated]
+
+    get "/my_user", UserController, :show
   end
 
   if Mix.env() in [:dev, :test] do
@@ -26,20 +33,6 @@ defmodule VirtualOfficeWeb.Router do
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
       live_dashboard "/dashboard", metrics: VirtualOfficeWeb.Telemetry
-    end
-  end
-
-  defp ensure_authenticated(conn, _opts) do
-    current_user_id = get_session(conn, :current_user_id)
-
-    if current_user_id do
-      conn
-    else
-      conn
-      |> put_status(:unauthorized)
-      |> put_view(VirtualOfficeWeb.ErrorView)
-      |> render("401.json", message: "Unauthenticated user")
-      |> halt()
     end
   end
 end

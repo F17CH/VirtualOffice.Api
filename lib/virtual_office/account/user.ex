@@ -6,8 +6,8 @@ defmodule VirtualOffice.Account.User do
   @foreign_key_type :binary_id
   schema "users" do
     field :email, :string
-    field :is_active, :boolean, default: false
     field :password, :string, virtual: true
+    field :password_confirmation, :string, virtual: true
     field :password_hash, :string
 
     timestamps(type: :utc_datetime_usec)
@@ -16,8 +16,10 @@ defmodule VirtualOffice.Account.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :is_active, :password])
-    |> validate_required([:email, :is_active, :password])
+    |> cast(attrs, [:email, :password, :password_confirmation])
+    |> validate_required([:email, :password, :password_confirmation])
+    |> validate_format(:email, ~r/@/)
+    |> validate_confirmation(:password)
     |> unique_constraint(:email)
     |> put_password_hash()
   end

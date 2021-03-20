@@ -12,18 +12,20 @@ defmodule VirtualOfficeWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
+  alias VirtualOffice.Guardian
+
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Account.create_user(user_params) do
+    with {:ok, %User{} = user} <- Account.create_user(user_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.user_path(conn, :show, user))
-      |> render("show.json", user: user)
+      |> render("jwt.json", jwt: token)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user = Account.get_user!(id)
-    render(conn, "show.json", user: user)
+  def show(conn, _params) do
+    user = Guardian.Plug.current_resource(conn)
+    conn
+    |> render("user.json", user: user)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
@@ -43,21 +45,12 @@ defmodule VirtualOfficeWeb.UserController do
   end
 
   def sign_in(conn, %{"email" => email, "password" => password}) do
-    case VirtualOffice.Account.authenticate_user(email, password) do
-      {:ok, user} ->
+    case Account.token_sign_in(email, password) do
+      {:ok, token, _claims} ->
         conn
-        |> put_session(:current_user_id, user.id)
-        |> configure_session(renew: true)
-        |> put_status(:ok)
-        |> put_view(VirtualOfficeWeb.UserView)
-        |> render("sign_in.json", user: user)
-
-      {:error, message} ->
-         conn
-         |> delete_session(:current_user_id)
-         |> put_status(:unauthorized)
-         |> put_view(VirtualOfficeWeb.ErrorView)
-         |> render("401.json", message: message)
+        |> render("jwt.json", jwt: token)
+        _ ->
+      {:error, :unauthorized}
     end
   end
 end

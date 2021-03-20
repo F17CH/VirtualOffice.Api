@@ -6,13 +6,12 @@ defmodule VirtualOffice.AccountTest do
   describe "users" do
     alias VirtualOffice.Account.User
 
-    @valid_attrs %{email: "some email", is_active: true, password: "some password"}
+    @valid_attrs %{email: "some email", password: "some password"}
     @update_attrs %{
       email: "some updated email",
-      is_active: false,
       password: "some updated password"
     }
-    @invalid_attrs %{email: nil, is_active: nil, password: nil}
+    @invalid_attrs %{email: nil, password: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -40,7 +39,6 @@ defmodule VirtualOffice.AccountTest do
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Account.create_user(@valid_attrs)
       assert user.email == "some email"
-      assert user.is_active == true
       assert Pbkdf2.verify_pass("some password", user.password_hash)
     end
 
@@ -52,7 +50,6 @@ defmodule VirtualOffice.AccountTest do
       user = user_fixture()
       assert {:ok, %User{} = user} = Account.update_user(user, @update_attrs)
       assert user.email == "some updated email"
-      assert user.is_active == false
       assert Pbkdf2.verify_pass("some updated password", user.password_hash)
     end
 

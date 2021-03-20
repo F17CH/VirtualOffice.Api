@@ -7,18 +7,15 @@ defmodule VirtualOfficeWeb.UserControllerTest do
 
   @create_attrs %{
     email: "some email",
-    is_active: true,
     password: "some password"
   }
   @update_attrs %{
     email: "some updated email",
-    is_active: false,
     password: "some updated password"
   }
-  @invalid_attrs %{email: nil, is_active: nil, password: nil}
+  @invalid_attrs %{email: nil, password: nil}
   @current_user_attrs %{
     email: "some current user email",
-    is_active: true,
     password: "some current user password"
   }
 
@@ -45,7 +42,6 @@ defmodule VirtualOfficeWeb.UserControllerTest do
                %{
                  "id" => current_user.id,
                  "email" => current_user.email,
-                 "is_active" => current_user.is_active
                }
              ]
     end
@@ -61,7 +57,6 @@ defmodule VirtualOfficeWeb.UserControllerTest do
       assert %{
                "id" => _id,
                "email" => "some email",
-               "is_active" => true
              } = json_response(conn, 200)["data"]
     end
 
@@ -83,7 +78,6 @@ defmodule VirtualOfficeWeb.UserControllerTest do
       assert %{
                "id" => _id,
                "email" => "some updated email",
-               "is_active" => false
              } = json_response(conn, 200)["data"]
     end
 
