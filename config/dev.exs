@@ -16,8 +16,8 @@ config :virtual_office, VirtualOffice.Repo,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :virtual_office, VirtualOfficeWeb.Endpoint,
-  http: [port: 4000],
-  debug_errors: true,
+  http: [port: 4010],
+  debug_errors: false,
   code_reloader: true,
   check_origin: false,
   watchers: []

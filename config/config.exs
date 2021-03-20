@@ -11,6 +11,8 @@ config :virtual_office,
   ecto_repos: [VirtualOffice.Repo],
   generators: [binary_id: true]
 
+  config :virtual_office, VirtualOffice.Repo, migration_timestamps: [type: :utc_datetime_usec]
+
 # Configures the endpoint
 config :virtual_office, VirtualOfficeWeb.Endpoint,
   url: [host: "localhost"],
