@@ -46,9 +46,9 @@ defmodule VirtualOfficeWeb.UserController do
 
   def sign_in(conn, %{"email" => email, "password" => password}) do
     case Account.token_sign_in(email, password) do
-      {:ok, token, _claims} ->
+      {{:ok, token, _claims}, tokenSeconds} ->
         conn
-        |> render("jwt.json", jwt: token)
+        |> render("jwt.json", token: token, expires_in: tokenSeconds)
         _ ->
       {:error, :unauthorized}
     end

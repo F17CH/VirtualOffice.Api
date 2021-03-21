@@ -10,6 +10,8 @@ defmodule VirtualOffice.Account do
 
   alias VirtualOffice.Guardian
 
+  @tokenSeconds 1800
+
   @doc """
   Returns the list of users.
 
@@ -107,7 +109,7 @@ defmodule VirtualOffice.Account do
   def token_sign_in(email, password) do
     case email_password_auth(email, password) do
       {:ok, user} ->
-        Guardian.encode_and_sign(user)
+        {Guardian.encode_and_sign(user, %{}, ttl: {@tokenSeconds, :seconds}), @tokenSeconds}
         _ ->
           {:error, :unauthorized}
     end
@@ -125,7 +127,7 @@ defmodule VirtualOffice.Account do
         {:error, "Login Error"}
       user ->
         {:ok, user}
-    end
+      end
   end
 
   defp verify_password(nil) do
