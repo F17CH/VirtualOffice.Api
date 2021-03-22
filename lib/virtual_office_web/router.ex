@@ -25,6 +25,9 @@ defmodule VirtualOfficeWeb.Router do
     pipe_through [:api, :jwt_authenticated]
 
     get "/my_user", UserController, :show
+    get "/users/health", UserController, :health
+
+    post "/users/sign_out", UserController, :sign_out
   end
 
   if Mix.env() in [:dev, :test] do

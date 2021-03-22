@@ -53,4 +53,17 @@ defmodule VirtualOfficeWeb.UserController do
       {:error, :unauthorized}
     end
   end
+
+  def sign_out(conn, _params) do
+    token = Guardian.Plug.current_token(conn)
+    Guardian.revoke(token)
+    conn
+    |> send_resp(:no_content, "")
+  end
+
+  def health(conn, _params) do
+    _ = Guardian.Plug.current_resource(conn)
+    conn
+    |> send_resp(:no_content, "")
+  end
 end
