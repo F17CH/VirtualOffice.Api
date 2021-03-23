@@ -12,7 +12,10 @@ defmodule VirtualOfficeWeb.UserView do
 
   def render("user.json", %{user: user}) do
     %{id: user.id,
-      email: user.email}
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name
+    }
   end
 
   def render("sign_in.json", %{user: user}) do

@@ -22,7 +22,7 @@ defmodule VirtualOfficeWeb.UserController do
     end
   end
 
-  def show(conn, _params) do
+  def self(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
     conn
     |> render("user.json", user: user)

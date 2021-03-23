@@ -9,6 +9,8 @@ defmodule VirtualOffice.Account.User do
     field :password, :string, virtual: true
     field :password_confirmation, :string, virtual: true
     field :password_hash, :string
+    field :first_name, :string
+    field :last_name, :string
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -16,8 +18,8 @@ defmodule VirtualOffice.Account.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password, :password_confirmation])
-    |> validate_required([:email, :password, :password_confirmation])
+    |> cast(attrs, [:email, :password, :password_confirmation, :first_name, :last_name])
+    |> validate_required([:email, :password, :password_confirmation, :first_name])
     |> validate_format(:email, ~r/@/)
     |> validate_confirmation(:password)
     |> unique_constraint(:email)
