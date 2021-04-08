@@ -4,7 +4,10 @@ defmodule VirtualOffice.InstantMessage.Conversation do
   alias VirtualOffice.InstantMessage.Conversation, as: Conversation
   alias VirtualOffice.Account.User, as: User
 
-  def new(), do: %Conversation{}
+  def new() do
+    IO.puts("Conversation Server Started.")
+    %Conversation{}
+  end
 
   def add_message(conversation, message, user_id) do
 
@@ -23,6 +26,7 @@ defmodule VirtualOffice.InstantMessage.Conversation do
       true ->
         {:error, :user_exists}
       false ->
+        IO.puts("User Added.")
         %Conversation{conversation | users: Map.put(conversation.users, user.id, user)}
     end
   end

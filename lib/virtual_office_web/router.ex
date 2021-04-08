@@ -28,6 +28,8 @@ defmodule VirtualOfficeWeb.Router do
     get "/users/health", UserController, :health
 
     post "/users/sign_out", UserController, :sign_out
+
+    post "/conversation/create", ConversationController, :create_conversation
   end
 
   if Mix.env() in [:dev, :test] do
