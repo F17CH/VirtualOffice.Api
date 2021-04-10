@@ -29,7 +29,11 @@ defmodule VirtualOfficeWeb.Router do
 
     post "/users/sign_out", UserController, :sign_out
 
-    post "/conversation/create", ConversationController, :create_conversation
+    post "/conversation/", ConversationController, :create
+
+
+    get "/conversation/:conversation_id/messages/", MessageController, :get_all
+    post "/conversation/:conversation_id/messages/", MessageController, :create
   end
 
   if Mix.env() in [:dev, :test] do

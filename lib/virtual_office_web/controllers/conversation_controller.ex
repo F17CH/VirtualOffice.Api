@@ -3,6 +3,7 @@ defmodule VirtualOfficeWeb.ConversationController do
 
   alias VirtualOffice.InstantMessage
   alias VirtualOffice.InstantMessage.ConversationServer
+  alias VirtualOffice.InstantMessage.ConversationCache
 
   alias VirtualOffice.Account
   alias VirtualOffice.Account.User
@@ -11,10 +12,14 @@ defmodule VirtualOfficeWeb.ConversationController do
 
   action_fallback VirtualOfficeWeb.FallbackController
 
-  def create_conversation(conn, %{"user_ids" => user_ids = [_ | _]}) do
+  def create(conn, %{"user_ids" => user_ids = [_ | _]}) do
+
+
+    :observer.start()
 
     user = Guardian.Plug.current_resource(conn)
-    {:ok, conv} = ConversationServer.start()
+
+    {:ok, new_conversation_id, conv} = ConversationCache.create_conversation()
     ConversationServer.add_user(conv, user)
 
     Enum.each(
@@ -25,7 +30,9 @@ defmodule VirtualOfficeWeb.ConversationController do
       end
       )
 
-    conn
-    |> send_resp(:no_content, "")
+      render(conn, "create.json", conversation_id: new_conversation_id)
+
   end
+
+
 end

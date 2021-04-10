@@ -44,7 +44,8 @@ defmodule VirtualOffice.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:pbkdf2_elixir, "~> 1.3.0"},
-      {:guardian, "~> 2.1.1"}
+      {:guardian, "~> 2.1.1"},
+      {:uuid, "~> 1.1"}
     ]
   end
 

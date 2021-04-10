@@ -1,12 +1,11 @@
 defmodule VirtualOffice.InstantMessage.Conversation do
-  defstruct message_id: 1, messages: [], users: %VirtualOffice.Account.User{}
+  defstruct id: "NULL", message_id: 1, messages: [], users: %VirtualOffice.Account.User{}
 
   alias VirtualOffice.InstantMessage.Conversation, as: Conversation
   alias VirtualOffice.Account.User, as: User
 
-  def new() do
-    IO.puts("Conversation Server Started.")
-    %Conversation{}
+  def new(conversation_id) do
+    %Conversation{id: conversation_id}
   end
 
   def add_message(conversation, message, user_id) do
@@ -32,6 +31,6 @@ defmodule VirtualOffice.InstantMessage.Conversation do
   end
 
   def get_messages(conversation) do
-    {conversation.messages}
+    conversation.messages
   end
 end

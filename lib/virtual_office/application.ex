@@ -9,6 +9,9 @@ defmodule VirtualOffice.Application do
     children = [
       # Start the Ecto repository
       VirtualOffice.Repo,
+
+      VirtualOffice.InstantMessage.ConversationCache,
+      VirtualOffice.InstantMessage.ConversationRegistry,
       # Start the Telemetry supervisor
       VirtualOfficeWeb.Telemetry,
       # Start the PubSub system
@@ -17,6 +20,7 @@ defmodule VirtualOffice.Application do
       VirtualOfficeWeb.Endpoint
       # Start a worker by calling: VirtualOffice.Worker.start_link(arg)
       # {VirtualOffice.Worker, arg}
+
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
