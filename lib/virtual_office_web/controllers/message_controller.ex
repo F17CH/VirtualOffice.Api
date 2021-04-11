@@ -12,11 +12,11 @@ defmodule VirtualOfficeWeb.MessageController do
 
   action_fallback VirtualOfficeWeb.FallbackController
 
-  def create(conn, %{"conversation_id" => conversation_id, "message" => message}) do
+  def create(conn, %{"conversation_id" => conversation_id, "content" => message_content}) do
     user = Guardian.Plug.current_resource(conn)
 
     ConversationCache.get_conversation(conversation_id)
-    |> ConversationServer.add_message(message, user.id)
+    |> ConversationServer.add_message(user.id, message_content)
 
     conn
     |> send_resp(:no_content, "")

@@ -21,19 +21,11 @@ defmodule VirtualOffice.InstantMessage.ConversationCache do
   def create_conversation() do
     new_conversation_id = UUID.uuid4()
 
-    {:ok, pid} = start_child(new_conversation_id)
-    {:ok, new_conversation_id, pid}
+    start_child(new_conversation_id)
   end
 
   def get_conversation(conversation_id) do
     ConversationServer.whereis(conversation_id)
-  end
-
-  def server_process(conversation_id) do
-    case start_child(conversation_id) do
-      {:ok, pid} -> pid
-      {:error, {:already_started, pid}} -> pid
-    end
   end
 
   def child_spec(_arg) do

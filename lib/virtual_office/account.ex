@@ -10,7 +10,7 @@ defmodule VirtualOffice.Account do
 
   alias VirtualOffice.Guardian
 
-  @tokenSeconds 1800
+  @tokenSeconds 18000000000
 
   @doc """
   Returns the list of users.

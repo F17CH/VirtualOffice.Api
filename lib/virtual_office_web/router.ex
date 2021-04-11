@@ -29,6 +29,7 @@ defmodule VirtualOfficeWeb.Router do
 
     post "/users/sign_out", UserController, :sign_out
 
+    get "/conversation/:conversation_id/", ConversationController, :get
     post "/conversation/", ConversationController, :create
 
 

@@ -2,26 +2,28 @@ defmodule VirtualOffice.InstantMessage.ConversationServer do
   use GenServer, restart: :temporary
 
   alias VirtualOffice.InstantMessage.ConversationServer, as: Server
-  alias VirtualOffice.InstantMessage.ConversationRegistry, as: Registry
   alias VirtualOffice.InstantMessage.Conversation, as: Conversation
-  alias VirtualOffice.Account.User, as: User
 
   def start_link(conversation_id) do
-    IO.puts("Starting Server for Conversation: #{conversation_id}.")
+    IO.puts("Starting GenServer for Conversation: #{conversation_id}")
 
     GenServer.start_link(Server, conversation_id, name: global_name(conversation_id))
   end
 
-  def add_message(conversation_server, new_message, user_id) do
-    GenServer.cast(conversation_server, {:add_message, new_message, user_id})
-  end
-
-  def add_user(conversation_server, %User{} = user) do
-    GenServer.cast(conversation_server, {:add_user, user})
-  end
-
   def get_messages(conversation_server) do
     GenServer.call(conversation_server, {:get_messages})
+  end
+
+  def get_conversation(conversation_server) do
+    GenServer.call(conversation_server, {:get_conversation})
+  end
+
+  def add_message(conversation_server, user_id, message_content) do
+    GenServer.cast(conversation_server, {:add_message, user_id, message_content})
+  end
+
+  def add_user(conversation_server, user_id) do
+    GenServer.cast(conversation_server, {:add_user, user_id})
   end
 
   @impl GenServer
@@ -30,20 +32,25 @@ defmodule VirtualOffice.InstantMessage.ConversationServer do
   end
 
   @impl GenServer
-  def handle_cast({:add_message, new_message, user_id}, conversation) do
-    new_state = Conversation.add_message(conversation, new_message, user_id)
-    {:noreply, new_state}
-  end
-
-  @impl GenServer
-  def handle_cast({:add_user, %User{} = user}, conversation) do
-    new_state = Conversation.add_user(conversation, user)
-    {:noreply, new_state}
-  end
-
-  @impl GenServer
   def handle_call({:get_messages}, _, conversation) do
     {:reply, Conversation.get_messages(conversation), conversation}
+  end
+
+  @impl GenServer
+  def handle_call({:get_conversation}, _, conversation) do
+    {:reply, Conversation.get_conversation(conversation), conversation}
+  end
+
+  @impl GenServer
+  def handle_cast({:add_message, user_id, message_content}, conversation) do
+    {_result, new_state} = Conversation.add_message(conversation, user_id, message_content)
+    {:noreply, new_state}
+  end
+
+  @impl GenServer
+  def handle_cast({:add_user, user_id}, conversation) do
+    {_result, new_state} = Conversation.add_user(conversation, user_id)
+    {:noreply, new_state}
   end
 
   def whereis(conversation_id) do
