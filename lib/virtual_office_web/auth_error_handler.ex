@@ -9,14 +9,11 @@ defmodule VirtualOffice.AuthErrorHandler do
 
     case type do
       :unauthenticated ->
-        body = Jason.encode!(%{status: 401, message: "Unauthorized"})
-        send_resp(conn, 401, body)
+        send_resp(conn, 401, Phoenix.View.render_to_string(VirtualOfficeWeb.ErrorView, "error.json", code: 401, details: "Unauthorized Request"))
       :invalid_token ->
-        body = Jason.encode!(%{status: 401, message: "Invalid Token"})
-        send_resp(conn, 401, body)
+        send_resp(conn, 401, Phoenix.View.render_to_string(VirtualOfficeWeb.ErrorView, "error.json", code: 401, details: "Invalid Token"))
       _ ->
-        body = Jason.encode!(%{status: 400, message: to_string(type)})
-        send_resp(conn, 400, body)
+        send_resp(conn, 400, Phoenix.View.render_to_string(VirtualOfficeWeb.ErrorView, "error.json", code: 400, details: to_string(type)))
     end
   end
 end
