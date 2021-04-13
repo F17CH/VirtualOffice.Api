@@ -18,27 +18,29 @@ defmodule VirtualOffice.InstantMessage.Conversation do
   end
 
   def add_message(conversation, user_id, message_content) do
-
-    IO.inspect(user_id)
-    IO.inspect(conversation.user_ids)
-    case Enum.member?(conversation.user_ids, user_id) do
+    case valid_user(conversation, user_id) do
       true ->
-        IO.puts("ADDING MESSAGE")
+        IO.puts("#{conversation.id}: Message Added.")
         new_message = Message.new(conversation.message_id, user_id, message_content)
         {:ok, %Conversation{conversation | messages: [new_message | conversation.messages], message_id: conversation.message_id + 1}}
       false ->
-        IO.puts("INVALID")
+        IO.puts("#{conversation.id}: Invalid User.")
         {{:error, :invalid_user}, conversation}
     end
   end
 
   def add_user(conversation, new_user_id) do
-    case Enum.member?(conversation.user_ids, new_user_id) do
+    case valid_user(conversation, new_user_id) do
       true ->
+        IO.puts("#{conversation.id}: User Already Exists.")
         {{:error, :user_exists}, conversation}
       false ->
-        IO.puts("User Added.")
+        IO.puts("#{conversation.id}: User Added.")
         {:ok, %Conversation{conversation | user_ids: [new_user_id | conversation.user_ids]}}
     end
+  end
+
+  defp valid_user(conversation, user_id) do
+    Enum.member?(conversation.user_ids, user_id)
   end
 end

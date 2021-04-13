@@ -17,7 +17,8 @@ defmodule VirtualOfficeWeb.FallbackController do
   def call(conn, {:error, :unauthorized}) do
     conn
     |> put_status(:unauthorized)
-    |> json(%{status: 401, message: "Invalid username or password"})
+    |> put_view(VirtualOfficeWeb.ErrorView)
+    |> render("401.json")
   end
 
   def call(conn, {:error, %Ecto.Changeset{}}) do

@@ -11,14 +11,22 @@ defmodule VirtualOfficeWeb.ErrorView do
   # the template name. For example, "404.json" becomes
   # "Not Found".
   def template_not_found(template, _assigns) do
-    %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
+    render("error.json", %{code: get_status_code(template), details: Phoenix.Controller.status_message_from_template(template)})
   end
 
-  def render("401.json", %{message: message}) do
+  def render("error.json", %{code: code, details: details}) do
     %{
-      errors: %{
-        detail: message
+      error: %{
+        code: code,
+        details: details
       }
     }
+  end
+
+  defp get_status_code(template) do
+    template
+    |> String.split(".")
+    |> hd()
+    |> String.to_integer()
   end
 end
