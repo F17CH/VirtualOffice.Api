@@ -1,13 +1,8 @@
 defmodule VirtualOfficeWeb.MessageController do
   use VirtualOfficeWeb, :controller
 
-  alias VirtualOffice.InstantMessage
   alias VirtualOffice.InstantMessage.ConversationServer
   alias VirtualOffice.InstantMessage.ConversationCache
-
-  alias VirtualOffice.Account
-  alias VirtualOffice.Account.User
-
   alias VirtualOffice.Guardian
 
   action_fallback VirtualOfficeWeb.FallbackController

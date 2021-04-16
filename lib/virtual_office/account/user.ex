@@ -2,6 +2,8 @@ defmodule VirtualOffice.Account.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias VirtualOffice.Group.Member
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -11,6 +13,7 @@ defmodule VirtualOffice.Account.User do
     field :password_hash, :string
     field :first_name, :string
     field :last_name, :string
+    has_many :members, Member
 
     timestamps(type: :utc_datetime_usec)
   end
