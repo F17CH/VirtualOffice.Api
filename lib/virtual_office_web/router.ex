@@ -12,8 +12,6 @@ defmodule VirtualOfficeWeb.Router do
     plug Guardian.AuthPipeline
   end
 
-
-
   scope "/api", VirtualOfficeWeb do
     pipe_through :api
 
@@ -24,17 +22,15 @@ defmodule VirtualOfficeWeb.Router do
   scope "/api", VirtualOfficeWeb do
     pipe_through [:api, :jwt_authenticated]
 
-    get "/users/self", UserController, :self
-    get "/users/health", UserController, :health
-
+    get "/users/self/", UserController, :self
+    get "/users/:user_id/", UserController, :get
     post "/users/sign_out", UserController, :sign_out
 
-    get "/conversation/:conversation_id/", ConversationController, :get
-    post "/conversation/", ConversationController, :create
+    get "/conversations/:conversation_id/", ConversationController, :get
+    post "/conversations/", ConversationController, :create
 
-
-    get "/conversation/:conversation_id/messages/", MessageController, :get_all
-    post "/conversation/:conversation_id/messages/", MessageController, :create
+    get "/conversations/:conversation_id/messages/", MessageController, :get_all
+    post "/conversations/:conversation_id/messages/", MessageController, :create
   end
 
   if Mix.env() in [:dev, :test] do
@@ -43,6 +39,6 @@ defmodule VirtualOfficeWeb.Router do
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
       live_dashboard "/dashboard", metrics: VirtualOfficeWeb.Telemetry
-    end
+   end
   end
 end

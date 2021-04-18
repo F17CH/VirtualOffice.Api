@@ -22,6 +22,12 @@ defmodule VirtualOfficeWeb.UserController do
     end
   end
 
+  def get(conn, %{"user_id" => user_id}) do
+    user = Account.get_user!(user_id)
+
+    render(conn, "show.json", user: user)
+  end
+
   def self(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
     conn
@@ -57,12 +63,6 @@ defmodule VirtualOfficeWeb.UserController do
   def sign_out(conn, _params) do
     token = Guardian.Plug.current_token(conn)
     Guardian.revoke(token)
-    conn
-    |> send_resp(:no_content, "")
-  end
-
-  def health(conn, _params) do
-    _ = Guardian.Plug.current_resource(conn)
     conn
     |> send_resp(:no_content, "")
   end
