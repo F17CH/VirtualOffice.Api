@@ -1,6 +1,7 @@
 defmodule VirtualOfficeWeb.UserSocket do
   use Phoenix.Socket
 
+  channel "user:*", VirtualOfficeWeb.UserChannel
   channel "conversation:*", VirtualOfficeWeb.ConversationChannel
 
   ## Channels

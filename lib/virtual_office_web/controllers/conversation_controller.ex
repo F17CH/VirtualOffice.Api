@@ -22,6 +22,7 @@ defmodule VirtualOfficeWeb.ConversationController do
       fn additional_user_id ->
         additional_user = Account.get_user!(additional_user_id)
         ConversationServer.add_user(conv, additional_user.id)
+        VirtualOfficeWeb.Endpoint.broadcast!("user:#{additional_user.id}", "conversation_new", %{data: ConversationServer.get_conversation(conv)})
       end
       )
 
