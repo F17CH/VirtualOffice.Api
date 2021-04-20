@@ -5,6 +5,7 @@ defmodule VirtualOfficeWeb.ConversationController do
   alias VirtualOffice.InstantMessage.ConversationCache
 
   alias VirtualOffice.Account
+  alias VirtualOfficeWeb.UserSpeaker
 
   alias VirtualOffice.Guardian
 
@@ -13,20 +14,30 @@ defmodule VirtualOfficeWeb.ConversationController do
   def create(conn, %{"user_ids" => user_ids = [_ | _]}) do
     user = Guardian.Plug.current_resource(conn)
 
-    {:ok, conv} = ConversationCache.create_conversation()
+    {:ok, conversation_server} = ConversationCache.create_conversation()
 
-    ConversationServer.add_user(conv, user.id)
+    ConversationServer.add_user(conversation_server, user.id)
 
     Enum.each(
       user_ids,
       fn additional_user_id ->
         additional_user = Account.get_user!(additional_user_id)
-        ConversationServer.add_user(conv, additional_user.id)
-        VirtualOfficeWeb.Endpoint.broadcast!("user:#{additional_user.id}", "conversation_new", %{data: ConversationServer.get_conversation(conv)})
+        ConversationServer.add_user(conversation_server, additional_user.id)
       end
-      )
+    )
 
-      render(conn, "get_conversation.json", conversation: ConversationServer.get_conversation(conv))
+    new_conversation = ConversationServer.get_conversation(conversation_server)
+
+    additional_user_ids =
+      ConversationServer.get_users(conversation_server)
+      |> List.delete(user.id)
+
+    UserSpeaker.speak(
+      {:conversation_new, new_conversation},
+      additional_user_ids
+    )
+
+    render(conn, "get_conversation.json", conversation: new_conversation)
   end
 
   def get(conn, %{"conversation_id" => conversation_id}) do

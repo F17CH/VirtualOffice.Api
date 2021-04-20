@@ -2,6 +2,7 @@ defmodule VirtualOfficeWeb.Group.Association do
   use VirtualOfficeWeb, :controller
 
   alias VirtualOffice.Account.User
+  alias VirtualOffice.Account
 
   action_fallback VirtualOfficeWeb.FallbackController
 

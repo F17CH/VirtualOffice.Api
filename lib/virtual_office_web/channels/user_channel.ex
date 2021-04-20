@@ -6,8 +6,7 @@ defmodule VirtualOfficeWeb.UserChannel do
   end
 
   def handle_in("hello", payload, socket) do
-    push socket, "said_hello", payload
+    push(socket, "said_hello", payload)
     {:noreply, socket}
   end
-
 end

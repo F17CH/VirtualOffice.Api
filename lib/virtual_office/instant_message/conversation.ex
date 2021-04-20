@@ -17,12 +17,16 @@ defmodule VirtualOffice.InstantMessage.Conversation do
     conversation.messages
   end
 
+  def get_users(conversation) do
+    conversation.user_ids
+  end
+
   def add_message(conversation, user_id, message_content) do
     case valid_user(conversation, user_id) do
       true ->
         IO.puts("#{conversation.id}: Message Added.")
         new_message = Message.new(conversation.message_id, user_id, message_content)
-        {:ok, %Conversation{conversation | messages: [new_message | conversation.messages], message_id: conversation.message_id + 1}}
+        {{:ok, new_message}, %Conversation{conversation | messages: [new_message | conversation.messages], message_id: conversation.message_id + 1}}
       false ->
         IO.puts("#{conversation.id}: Invalid User.")
         {{:error, :invalid_user}, conversation}
