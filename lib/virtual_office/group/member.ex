@@ -1,4 +1,4 @@
-defmodule Group.Member do
+defmodule VirtualOffice.Group.Member do
   use Ecto.Schema
 
   alias VirtualOffice.Group.Association

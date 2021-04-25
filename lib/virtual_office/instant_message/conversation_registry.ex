@@ -10,10 +10,6 @@ defmodule VirtualOffice.InstantMessage.ConversationRegistry do
     {:via, Registry, {__MODULE__, key}}
   end
 
-  def look_up(key) do
-
-  end
-
   def child_spec(_) do
     Supervisor.child_spec(
       Registry,

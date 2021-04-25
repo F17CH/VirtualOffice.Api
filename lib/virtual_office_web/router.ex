@@ -26,6 +26,9 @@ defmodule VirtualOfficeWeb.Router do
     get "/users/:user_id/", UserController, :get
     post "/users/sign_out", UserController, :sign_out
 
+    post "/associations/", AssociationController, :create
+    get "/associations/:association_id", AssociationController, :get
+
     get "/conversations/:conversation_id/", ConversationController, :get
     post "/conversations/", ConversationController, :create
 

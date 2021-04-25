@@ -10,6 +10,7 @@ defmodule VirtualOffice.Application do
       # Start the Ecto repository
       VirtualOffice.Repo,
 
+      VirtualOffice.Group.AssociationCache,
       VirtualOffice.InstantMessage.ConversationCache,
       VirtualOffice.InstantMessage.ConversationRegistry,
       # Start the Telemetry supervisor
