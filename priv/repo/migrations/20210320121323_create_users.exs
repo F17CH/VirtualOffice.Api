@@ -6,6 +6,8 @@ defmodule VirtualOffice.Repo.Migrations.CreateUsers do
       add :id, :binary_id, primary_key: true
       add :email, :string, null: false
       add :password_hash, :string
+      add :first_name, :text, null: false
+      add :last_name, :text
 
       timestamps()
     end

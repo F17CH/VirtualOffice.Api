@@ -1,5 +1,4 @@
 defmodule VirtualOffice.Group.AssociationCache do
-
   alias VirtualOffice.Group.AssociationServer
 
   def start_link() do
@@ -12,7 +11,13 @@ defmodule VirtualOffice.Group.AssociationCache do
   end
 
   def server_process(association_id) do
-    existing_process(association_id) || new_process(association_id)
+    case existing_process(association_id) || new_process(association_id) do
+      {:error, message} ->
+        {:error, message}
+
+      pid ->
+        {:ok, pid}
+    end
   end
 
   defp existing_process(association_id) do
@@ -20,12 +25,13 @@ defmodule VirtualOffice.Group.AssociationCache do
   end
 
   defp new_process(association_id) do
-    case     DynamicSupervisor.start_child(
-      __MODULE__,
-      {AssociationServer, association_id}
-    ) do
+    case DynamicSupervisor.start_child(
+           __MODULE__,
+           {AssociationServer, association_id}
+         ) do
       {:ok, pid} -> pid
       {:error, {:already_started, pid}} -> pid
+      {:error, {:shutdown, reason}} -> {:error, reason}
     end
   end
 
@@ -36,6 +42,4 @@ defmodule VirtualOffice.Group.AssociationCache do
       type: :supervisor
     }
   end
-
-
 end

@@ -7,8 +7,12 @@ defmodule VirtualOfficeWeb.AssociationController do
   action_fallback VirtualOfficeWeb.FallbackController
 
   def create(conn, %{"association" => association_params}) do
+    user = Guardian.Plug.current_resource(conn)
+
     case Group.create_association(association_params) do
       {:ok, %Association{} = association} ->
+        association = Group.join_association(association.id, user.id, "Owner")
+
         render(conn, "get_association.json", association: association)
     end
   end

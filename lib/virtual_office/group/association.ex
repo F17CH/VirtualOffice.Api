@@ -10,7 +10,7 @@ defmodule VirtualOffice.Group.Association do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  @derive {Jason.Encoder, only: [:id, :name]}
+  @derive {Jason.Encoder, only: [:id, :name, :members]}
   schema "associations" do
     field :name, :string
     has_many :members, Member
@@ -29,12 +29,27 @@ defmodule VirtualOffice.Group.Association do
     |> Repo.insert()
   end
 
+  def load_association(association_id) do
+    Repo.get(Association, association_id) |>
+    Repo.preload(:members)
+  rescue
+    Ecto.Query.CastError -> :nil
+  end
+
   def get_association(association) do
     association
   end
 
-  def load_association(association_id) do
-    Repo.get!(Association, association_id)
+  def join_association(association, user_id, role) do
+    member = Member.new(%{association_id: association.id, user_id: user_id, role: role})
+
+    IO.inspect(member)
+    IO.inspect(association)
+
+    add_member(association, member)
   end
 
+  defp add_member(assosiation, member) do
+    %Association{assosiation | members: [member | assosiation.members]}
+  end
 end
