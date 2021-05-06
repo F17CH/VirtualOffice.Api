@@ -41,10 +41,7 @@ defmodule VirtualOffice.Group.Association do
   end
 
   def join_association(association, user_id, role) do
-    member = Member.new(%{association_id: association.id, user_id: user_id, role: role})
-
-    IO.inspect(member)
-    IO.inspect(association)
+    {:ok, member} = Member.new(%{association_id: association.id, user_id: user_id, role: role})
 
     add_member(association, member)
   end
