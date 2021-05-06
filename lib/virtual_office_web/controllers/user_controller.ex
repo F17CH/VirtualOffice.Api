@@ -3,6 +3,7 @@ defmodule VirtualOfficeWeb.UserController do
 
   alias VirtualOffice.Account
   alias VirtualOffice.Account.User
+  alias VirtualOffice.Group
 
   action_fallback VirtualOfficeWeb.FallbackController
 
@@ -30,8 +31,9 @@ defmodule VirtualOfficeWeb.UserController do
 
   def self(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
+    associations = Group.get_associations_for_user(user.id)
     conn
-    |> render("show.json", user: user)
+    |> render("user_with_associations.json", user: user, associations: associations)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do

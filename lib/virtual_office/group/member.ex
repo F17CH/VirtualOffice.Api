@@ -11,7 +11,7 @@ defmodule VirtualOffice.Group.Member do
 
   @primary_key false
   @foreign_key_type :binary_id
-  @derive {Jason.Encoder, only: [:user, :role]}
+  @derive {Jason.Encoder, only: [:user_id, :role]}
   schema "members" do
     belongs_to :association, Association
     belongs_to :user, User
@@ -28,6 +28,7 @@ defmodule VirtualOffice.Group.Member do
   def new(attrs \\ %{}) do
     %Member{}
     |> Member.changeset(attrs)
+    |> Repo.insert()
   end
 
   def save(member = %Member{}) do
