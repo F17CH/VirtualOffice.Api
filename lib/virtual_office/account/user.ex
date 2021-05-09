@@ -6,6 +6,7 @@ defmodule VirtualOffice.Account.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @derive {Jason.Encoder, only: [:id, :email, :first_name, :last_name]}
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true

@@ -22,7 +22,7 @@ defmodule VirtualOfficeWeb.Router do
   scope "/api", VirtualOfficeWeb do
     pipe_through [:api, :jwt_authenticated]
 
-    get "/users/self/", UserController, :self
+    get "/users/current/", UserController, :current
     get "/users/:user_id/", UserController, :get
     post "/users/sign_out", UserController, :sign_out
 

@@ -15,12 +15,16 @@ defmodule VirtualOfficeWeb.UserView do
     %{id: user.id, email: user.email, firstName: user.first_name, lastName: user.last_name}
   end
 
+  def render("user_from_member.json", %{user: user}) do
+    %{id: user.id, firstName: user.first_name, lastName: user.last_name}
+  end
+
   def render("user_with_associations.json", %{user: user, associations: associations}) do
     %{data: %{id: user.id, email: user.email, firstName: user.first_name, lastName: user.last_name,
     associations: render_many(associations, AssociationView, "association.json")}}
   end
 
-  def render("sign_in.json", %{user: user}) do
+  def render("user_from_sign_in.json", %{user: user}) do
     %{
       data: %{
         user: %{

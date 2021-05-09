@@ -29,7 +29,7 @@ defmodule VirtualOfficeWeb.UserController do
     render(conn, "show.json", user: user)
   end
 
-  def self(conn, _params) do
+  def current(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
     associations = Group.get_associations_for_user(user.id)
     conn

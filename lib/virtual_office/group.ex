@@ -27,12 +27,20 @@ defmodule VirtualOffice.Group do
   end
 
   def get_associations_for_user(user_id) do
-    Repo.all(
-      from a in Association,
-      join: m in Member,
-      on: a.id == m.association_id,
-      where: m.user_id == ^user_id
-    ) |> Repo.preload(:members)
-  end
+    association_ids =
+      Repo.all(
+        from a in Association,
+          join: m in assoc(a, :members),
+          join: u in assoc(m, :user),
+          where: u.id == ^user_id,
+          select: a.id
+      )
 
+    from(
+      a in Association,
+      where: a.id in ^association_ids
+    )
+    |> Repo.all()
+    |> Repo.preload(members: :user)
+  end
 end
