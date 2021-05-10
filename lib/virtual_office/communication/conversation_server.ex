@@ -1,13 +1,15 @@
-defmodule VirtualOffice.InstantMessage.ConversationServer do
+defmodule VirtualOffice.Communication.ConversationServer do
   use GenServer, restart: :temporary
 
-  alias VirtualOffice.InstantMessage.ConversationServer, as: Server
-  alias VirtualOffice.InstantMessage.Conversation, as: Conversation
+  alias VirtualOffice.Communication.ConversationServer
+  alias VirtualOffice.Communication.Conversation
+
+  @conversation_timeout_ms 100000
 
   def start_link(conversation_id) do
     IO.puts("Starting GenServer for Conversation: #{conversation_id}")
 
-    GenServer.start_link(Server, conversation_id, name: global_name(conversation_id))
+    GenServer.start_link(ConversationServer, conversation_id, name: global_name(conversation_id))
   end
 
   def get_conversation(conversation_server) do
@@ -32,7 +34,20 @@ defmodule VirtualOffice.InstantMessage.ConversationServer do
 
   @impl GenServer
   def init(conversation_id) do
-    {:ok, Conversation.new(conversation_id)}
+    case Conversation.load_conversation(conversation_id) do
+      :nil -> {:stop, {:shutdown, :invalid_conversation}}
+      conversation -> {:ok, conversation, @conversation_timeout_ms}
+    end
+  end
+
+  @impl GenServer
+  def handle_info(:timeout, conversation) do
+    {:stop, :normal, conversation}
+  end
+
+  @impl GenServer
+  def terminate(:normal, conversation) do
+    IO.puts("Stopping GenServer for Conversation: #{conversation.id}")
   end
 
   @impl GenServer
@@ -59,6 +74,7 @@ defmodule VirtualOffice.InstantMessage.ConversationServer do
   @impl GenServer
   def handle_call({:add_message, user_id, message_content}, _, conversation) do
     {response, new_state} = Conversation.add_message(conversation, user_id, message_content)
+    IO.puts("HERE")
     {:reply, response, new_state}
   end
 

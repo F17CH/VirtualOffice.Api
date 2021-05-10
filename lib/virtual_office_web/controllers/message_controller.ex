@@ -1,8 +1,8 @@
 defmodule VirtualOfficeWeb.MessageController do
   use VirtualOfficeWeb, :controller
 
-  alias VirtualOffice.InstantMessage.ConversationServer
-  alias VirtualOffice.InstantMessage.ConversationCache
+  alias VirtualOffice.Communication
+  alias VirtualOffice.Communication
   alias VirtualOffice.Guardian
 
   alias VirtualOfficeWeb.ConversationSpeaker
@@ -12,9 +12,7 @@ defmodule VirtualOfficeWeb.MessageController do
   def create(conn, %{"conversation_id" => conversation_id, "content" => message_content}) do
     user = Guardian.Plug.current_resource(conn)
 
-    conversation_server = ConversationCache.get_conversation(conversation_id)
-
-    case ConversationServer.add_message(conversation_server, user.id, message_content) do
+    case Communication.add_message(conversation_id, user.id, message_content) do
       {:ok, message} ->
         ConversationSpeaker.speak({:message_new, message}, conversation_id)
 

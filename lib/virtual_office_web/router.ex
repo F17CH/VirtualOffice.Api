@@ -23,8 +23,12 @@ defmodule VirtualOfficeWeb.Router do
     pipe_through [:api, :jwt_authenticated]
 
     get "/users/current/", UserController, :current
+    post "/users/current/sign_out", UserController, :sign_out
+
     get "/users/:user_id/", UserController, :get
-    post "/users/sign_out", UserController, :sign_out
+    get "users/:user_id/conversation", ConversationController, :get_individual
+    post "users/:user_id/conversation", ConversationController, :create_individual
+
 
     post "/associations/", AssociationController, :create
     get "/associations/:association_id", AssociationController, :get

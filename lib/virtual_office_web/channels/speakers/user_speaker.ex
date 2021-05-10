@@ -1,6 +1,6 @@
 defmodule VirtualOfficeWeb.UserSpeaker do
 
-  alias VirtualOffice.InstantMessage.Conversation
+  alias VirtualOffice.Communication.Conversation
 
   def speak({:conversation_new, conversation = %Conversation{}}, user_ids) do
     Enum.each(

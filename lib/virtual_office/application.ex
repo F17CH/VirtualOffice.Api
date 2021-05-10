@@ -11,8 +11,8 @@ defmodule VirtualOffice.Application do
       VirtualOffice.Repo,
 
       VirtualOffice.Group.AssociationCache,
-      VirtualOffice.InstantMessage.ConversationCache,
-      VirtualOffice.InstantMessage.ConversationRegistry,
+      VirtualOffice.Communication.ConversationCache,
+      VirtualOffice.Communication.ConversationRegistry,
       # Start the Telemetry supervisor
       VirtualOfficeWeb.Telemetry,
       # Start the PubSub system

@@ -1,4 +1,4 @@
-defmodule VirtualOffice.InstantMessage.ConversationRegistry do
+defmodule VirtualOffice.Communication.ConversationRegistry do
 
   def start_link() do
     IO.puts("Starting Conversation Registry.")

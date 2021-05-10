@@ -1,8 +1,10 @@
 defmodule VirtualOfficeWeb.ConversationController do
   use VirtualOfficeWeb, :controller
 
-  alias VirtualOffice.InstantMessage.ConversationServer
-  alias VirtualOffice.InstantMessage.ConversationCache
+  alias VirtualOffice.Communication.ConversationServer
+  alias VirtualOffice.Communication.ConversationCache
+
+  alias VirtualOffice.Communication
 
   alias VirtualOffice.Account
   alias VirtualOfficeWeb.UserSpeaker
@@ -10,6 +12,26 @@ defmodule VirtualOfficeWeb.ConversationController do
   alias VirtualOffice.Guardian
 
   action_fallback VirtualOfficeWeb.FallbackController
+
+  def create_individual(conn, %{"user_id" => recipient_user_id}) do
+    current_user = Guardian.Plug.current_resource(conn)
+
+    new_conversation =
+      Communication.create_or_get_indivdual_conversation(current_user.id, recipient_user_id)
+
+    UserSpeaker.speak(
+      {:conversation_new, new_conversation},
+      [recipient_user_id]
+    )
+
+    render(conn, "get_conversation.json", conversation: new_conversation)
+  end
+
+  def get(conn, %{"conversation_id" => conversation_id}) do
+    conversation = Communication.get_conversation(conversation_id)
+
+    render(conn, "get_conversation.json", conversation: conversation)
+  end
 
   def create(conn, %{"user_ids" => user_ids = [_ | _]}) do
     user = Guardian.Plug.current_resource(conn)
@@ -38,11 +60,5 @@ defmodule VirtualOfficeWeb.ConversationController do
     )
 
     render(conn, "get_conversation.json", conversation: new_conversation)
-  end
-
-  def get(conn, %{"conversation_id" => conversation_id}) do
-    conv = ConversationCache.get_conversation(conversation_id)
-
-    render(conn, "get_conversation.json", conversation: ConversationServer.get_conversation(conv))
   end
 end
