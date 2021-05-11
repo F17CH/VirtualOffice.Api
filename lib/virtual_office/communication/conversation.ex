@@ -4,8 +4,7 @@ defmodule VirtualOffice.Communication.Conversation do
   import Ecto.Query, warn: false
   alias VirtualOffice.Repo
 
-  alias VirtualOffice.Group.Association
-  alias VirtualOffice.Group.Member
+  alias VirtualOffice.Account.User
   alias VirtualOffice.Communication.Conversation, as: Conversation
   alias VirtualOffice.Communication.Message, as: Message
 

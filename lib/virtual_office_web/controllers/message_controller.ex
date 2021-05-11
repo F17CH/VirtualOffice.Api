@@ -10,9 +10,9 @@ defmodule VirtualOfficeWeb.MessageController do
   action_fallback VirtualOfficeWeb.FallbackController
 
   def create(conn, %{"conversation_id" => conversation_id, "content" => message_content}) do
-    user = Guardian.Plug.current_resource(conn)
+    current_user_id = Guardian.Plug.current_resource(conn)
 
-    case Communication.add_message(conversation_id, user.id, message_content) do
+    case Communication.add_message(conversation_id, current_user_id, message_content) do
       {:ok, message} ->
         ConversationSpeaker.speak({:message_new, message}, conversation_id)
 

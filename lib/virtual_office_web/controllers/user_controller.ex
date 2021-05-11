@@ -4,9 +4,9 @@ defmodule VirtualOfficeWeb.UserController do
   alias VirtualOffice.Account
   alias VirtualOffice.Account.User
   alias VirtualOffice.Group
+  alias VirtualOffice.Communication
 
   action_fallback VirtualOfficeWeb.FallbackController
-
 
   def index(conn, _params) do
     users = Account.list_users()
@@ -30,10 +30,16 @@ defmodule VirtualOfficeWeb.UserController do
   end
 
   def current(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
-    associations = Group.get_associations_for_user(user.id)
+    current_user_id = Guardian.Plug.current_resource(conn)
+    associations = Group.get_associations_for_user(current_user_id)
+    individual_conversations = Communication.get_individual_conversations_for_user(current_user_id)
+
     conn
-    |> render("user_with_associations.json", user: user, associations: associations)
+    |> render("user_with_associations_and_conversations.json", %{
+      user: Account.get_user!(current_user_id),
+      associations: associations,
+      individual_conversations: individual_conversations}
+    )
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
@@ -57,14 +63,16 @@ defmodule VirtualOfficeWeb.UserController do
       {{:ok, token, _claims}, tokenSeconds} ->
         conn
         |> render("jwt.json", token: token, expires_in: tokenSeconds)
-        _ ->
-      {:error, :unauthorized}
+
+      _ ->
+        {:error, :unauthorized}
     end
   end
 
   def sign_out(conn, _params) do
     token = Guardian.Plug.current_token(conn)
     Guardian.revoke(token)
+
     conn
     |> send_resp(:no_content, "")
   end

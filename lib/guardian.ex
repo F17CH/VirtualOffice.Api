@@ -12,7 +12,7 @@ defmodule VirtualOffice.Guardian do
 
   def resource_from_claims(claims) do
     id = claims["sub"]
-    resource = VirtualOffice.Account.get_user!(id)
+    resource = id
     {:ok, resource}
   end
 

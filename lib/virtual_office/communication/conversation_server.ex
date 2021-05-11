@@ -74,7 +74,6 @@ defmodule VirtualOffice.Communication.ConversationServer do
   @impl GenServer
   def handle_call({:add_message, user_id, message_content}, _, conversation) do
     {response, new_state} = Conversation.add_message(conversation, user_id, message_content)
-    IO.puts("HERE")
     {:reply, response, new_state}
   end
 
