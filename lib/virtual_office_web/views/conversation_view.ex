@@ -12,7 +12,7 @@ defmodule VirtualOfficeWeb.ConversationView do
       }) do
      %{
        id: individual_conversation.id,
-       recipient_user:
+       recipientUser:
          render_one(individual_conversation.recipient_user, UserView, "user_from_member.json", as: :user),
        messages: individual_conversation.messages
      }

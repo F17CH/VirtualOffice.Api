@@ -35,8 +35,8 @@ defmodule VirtualOffice.Communication.Conversation do
   def load_conversation(conversation_id) do
     Repo.get(Conversation, conversation_id)
     |> Repo.preload(:messages)
-#  rescue
-#    Ecto.Query.CastError -> nil
+  rescue
+    Ecto.Query.CastError -> nil
   end
 
   def get_conversation(conversation) do
@@ -63,14 +63,12 @@ defmodule VirtualOffice.Communication.Conversation do
                content: message_content
              }) do
           {:ok, new_message = %Message{}} ->
-            IO.puts("HERE")
             {new_message, %Conversation{
               conversation
               | messages: [new_message | conversation.messages],
                 message_count: conversation.message_count + 1
             }}
           _ ->
-            IO.puts("HERE123")
             conversation
         end
 

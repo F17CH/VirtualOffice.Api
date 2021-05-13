@@ -33,15 +33,22 @@ defmodule VirtualOfficeWeb.UserView do
         %{}
       )
 
+    associations =
+      Enum.into(
+        Enum.map(associations, fn {key, value} ->
+          {key, render_one(value, AssociationView, "association.json")}
+        end),
+        %{}
+      )
+
     %{
       data: %{
         id: user.id,
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
-        associations: render_many(associations, AssociationView, "association.json"),
-        individual_conversations:
-          individual_conversations
+        associations: associations,
+        individualConversations: individual_conversations
       }
     }
   end

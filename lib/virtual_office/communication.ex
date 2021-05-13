@@ -35,7 +35,7 @@ defmodule VirtualOffice.Communication do
         preload: [:messages, :user1]
       )
 
-      convert_to_individual_conversations_for_user(conversations, user_id)
+      convert_to_individual_conversations_for_user_dict(conversations, user_id)
   end
 
   def get_conversation(conversation_id) do
@@ -62,7 +62,7 @@ defmodule VirtualOffice.Communication do
     end
   end
 
-  defp convert_to_individual_conversations_for_user(conversations, user_id) do
+  defp convert_to_individual_conversations_for_user_dict(conversations, user_id) do
     conversations |>
     Enum.into(%{},
     fn c ->

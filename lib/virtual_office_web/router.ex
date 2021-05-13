@@ -26,8 +26,8 @@ defmodule VirtualOfficeWeb.Router do
     post "/users/current/sign_out", UserController, :sign_out
 
     get "/users/:user_id/", UserController, :get
-    get "users/:user_id/conversation", ConversationController, :get_individual
-    post "users/:user_id/conversation", ConversationController, :create_individual
+    get "/users/:user_id/conversation", ConversationController, :get_individual
+    post "/users/:user_id/conversation", ConversationController, :create_individual
 
 
     post "/associations/", AssociationController, :create
