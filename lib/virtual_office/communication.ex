@@ -59,10 +59,11 @@ defmodule VirtualOffice.Communication do
   end
 
   defp convert_to_individual_conversations_for_user(conversations, user_id) do
-    Enum.map(conversations,
+    conversations |>
+    Enum.into(%{},
     fn c ->
       individual_conversation = IndividualConversation.new(c, user_id)
-      %{individual_conversation.recipient_user.id => individual_conversation}
+      {individual_conversation.recipient_user.id, individual_conversation}
     end
     )
   end
