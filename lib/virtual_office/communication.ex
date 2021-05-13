@@ -38,8 +38,12 @@ defmodule VirtualOffice.Communication do
       convert_to_individual_conversations_for_user(conversations, user_id)
   end
 
-
   def get_conversation(conversation_id) do
+    {:ok, conversation_server} = ConversationCache.server_process(conversation_id)
+    ConversationServer.get_conversation(conversation_server)
+  end
+
+  def get_messages(conversation_id) do
     {:ok, conversation_server} = ConversationCache.server_process(conversation_id)
     ConversationServer.get_conversation(conversation_server)
   end

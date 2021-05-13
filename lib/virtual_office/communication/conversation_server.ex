@@ -52,29 +52,29 @@ defmodule VirtualOffice.Communication.ConversationServer do
 
   @impl GenServer
   def handle_call({:get_conversation}, _, conversation) do
-    {:reply, Conversation.get_conversation(conversation), conversation}
+    {:reply, Conversation.get_conversation(conversation), conversation, @conversation_timeout_ms}
   end
 
-  @impl GenServer
-  def handle_call({:get_users}, _, conversation) do
-    {:reply, Conversation.get_users(conversation), conversation}
-  end
+#  @impl GenServer
+#  def handle_call({:get_users}, _, conversation) do
+#    {:reply, Conversation.get_users(conversation), conversation}
+#  end
 
   @impl GenServer
   def handle_call({:get_messages}, _, conversation) do
-    {:reply, Conversation.get_messages(conversation), conversation}
+    {:reply, Conversation.get_messages(conversation), conversation, @conversation_timeout_ms}
   end
 
-  @impl GenServer
-  def handle_call({:add_user, user_id}, _, conversation) do
-    {result, new_state} = Conversation.add_user(conversation, user_id)
-    {:reply, result, new_state}
-  end
+#  @impl GenServer
+#  def handle_call({:add_user, user_id}, _, conversation) do
+#    {result, new_state} = Conversation.add_user(conversation, user_id)
+#    {:reply, result, new_state}
+#  end
 
   @impl GenServer
   def handle_call({:add_message, user_id, message_content}, _, conversation) do
-    {response, new_state} = Conversation.add_message(conversation, user_id, message_content)
-    {:reply, response, new_state}
+    {response, new_conversation_state} = Conversation.add_message(conversation, user_id, message_content)
+    {:reply, response, new_conversation_state, @conversation_timeout_ms}
   end
 
   def whereis(conversation_id) do

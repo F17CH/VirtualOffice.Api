@@ -2,7 +2,6 @@ defmodule VirtualOfficeWeb.MessageController do
   use VirtualOfficeWeb, :controller
 
   alias VirtualOffice.Communication
-  alias VirtualOffice.Communication
   alias VirtualOffice.Guardian
 
   alias VirtualOfficeWeb.ConversationSpeaker
@@ -21,9 +20,7 @@ defmodule VirtualOfficeWeb.MessageController do
   end
 
   def get_all(conn, %{"conversation_id" => conversation_id}) do
-
-    messages = ConversationCache.get_conversation(conversation_id)
-    |> ConversationServer.get_messages()
+    messages = Communication.get_messages(conversation_id)
 
     render(conn, "messages.json", messages: messages)
   end
