@@ -4,6 +4,8 @@ defmodule VirtualOfficeWeb.UserView do
   alias VirtualOfficeWeb.AssociationView
   alias VirtualOfficeWeb.ConversationView
 
+  alias VirtualOffice.Communication.ConversationUser
+
   def render("get_users.json", %{users: users}) do
     %{data: render_many(users, UserView, "user.json")}
   end
@@ -25,32 +27,25 @@ defmodule VirtualOfficeWeb.UserView do
         associations: associations,
         individual_conversations: individual_conversations
       }) do
-    individual_conversations =
-      Enum.into(
-        Enum.map(individual_conversations, fn {key, value} ->
-          {key, render_one(value, ConversationView, "individual_conversation.json")}
-        end),
-        %{}
-      )
-
-    associations =
-      Enum.into(
-        Enum.map(associations, fn {key, value} ->
-          {key, render_one(value, AssociationView, "association.json")}
-        end),
-        %{}
-      )
-
     %{
       data: %{
         id: user.id,
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
-        associations: associations,
-        individualConversations: individual_conversations
+        associations: render_many(associations, AssociationView, "association.json"),
+        individualConversations:
+          render_many(individual_conversations, ConversationView, "conversation.json",
+            as: :conversation
+          )
       }
     }
+  end
+
+  def render("conversation_user_from_conversation.json", %{
+        conversation_user: conversation_user = %ConversationUser{}
+      }) do
+    render_one(conversation_user.user, UserView, "user_from_member.json", as: :user)
   end
 
   def render("user_from_sign_in.json", %{user: user}) do

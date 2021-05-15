@@ -36,22 +36,12 @@ defmodule VirtualOffice.Group do
           select: a.id
       )
 
-    associations = from(
+    from(
       a in Association,
       where: a.id in ^association_ids
     )
     |> Repo.all()
     |> Repo.preload(members: :user)
-
-    convert_to_associations_for_id_dict(associations)
   end
 
-  defp convert_to_associations_for_id_dict(associations) do
-    associations |>
-    Enum.into(%{},
-    fn a ->
-      {a.id, a}
-    end
-    )
-  end
 end

@@ -1,10 +1,23 @@
 defmodule VirtualOfficeWeb.ConversationView do
   use VirtualOfficeWeb, :view
 
+  alias VirtualOfficeWeb.ConversationView
   alias VirtualOfficeWeb.UserView
+  alias VirtualOffice.Communication.Conversation
 
-  def render("get_conversation.json", %{conversation: conversation}) do
-    %{data: conversation}
+  def render("get_conversation.json", %{conversation: conversation = %Conversation{}}) do
+    %{data: render_one(conversation, ConversationView, "conversation.json")}
+  end
+
+  def render("conversation.json", %{
+    conversation: conversation = %Conversation{}
+  }) do
+    %{
+    id: conversation.id,
+    individual: conversation.individual,
+    messages: conversation.messages,
+    users: render_many(conversation.conversation_users, UserView, "conversation_user_from_conversation.json", as: :conversation_user)
+    }
   end
 
   def render("individual_conversation.json", %{
@@ -17,4 +30,6 @@ defmodule VirtualOfficeWeb.ConversationView do
        messages: individual_conversation.messages
      }
   end
+
+
 end

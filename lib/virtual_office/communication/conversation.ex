@@ -4,17 +4,16 @@ defmodule VirtualOffice.Communication.Conversation do
   import Ecto.Query, warn: false
   alias VirtualOffice.Repo
 
-  alias VirtualOffice.Account.User
-  alias VirtualOffice.Communication.Conversation, as: Conversation
-  alias VirtualOffice.Communication.Message, as: Message
+  alias VirtualOffice.Communication.Conversation
+  alias VirtualOffice.Communication.ConversationUser
+  alias VirtualOffice.Communication.Message
 
-  @derive {Jason.Encoder, only: [:id, :individual, :individual_user_id1, :individual_user_id2, :messages]}
+  @derive {Jason.Encoder, only: [:id, :individual, :messages, :conversation_users]}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "conversations" do
     field :individual, :boolean
-    belongs_to :user1, User, foreign_key: :individual_user_id1
-    belongs_to :user2, User, foreign_key: :individual_user_id2
+    has_many :conversation_users, ConversationUser
     field :message_count, :integer
     has_many :messages, Message
   end
@@ -22,7 +21,7 @@ defmodule VirtualOffice.Communication.Conversation do
   @doc false
   def changeset(conversation, attrs) do
     conversation
-    |> cast(attrs, [:individual, :individual_user_id1, :individual_user_id2])
+    |> cast(attrs, [:individual])
     |> validate_required([:individual])
   end
 
@@ -34,7 +33,7 @@ defmodule VirtualOffice.Communication.Conversation do
 
   def load_conversation(conversation_id) do
     Repo.get(Conversation, conversation_id)
-    |> Repo.preload(:messages)
+    |> Repo.preload([:messages, conversation_users: :user])
   rescue
     Ecto.Query.CastError -> nil
   end
@@ -63,34 +62,38 @@ defmodule VirtualOffice.Communication.Conversation do
                content: message_content
              }) do
           {:ok, new_message = %Message{}} ->
-            {new_message, %Conversation{
-              conversation
-              | messages: [new_message | conversation.messages],
-                message_count: conversation.message_count + 1
-            }}
+            {new_message,
+             %Conversation{
+               conversation
+               | messages: [new_message | conversation.messages],
+                 message_count: conversation.message_count + 1
+             }}
+
           _ ->
             conversation
         end
-
       false ->
         IO.puts("#{conversation.id}: Invalid User.")
         {{:error, :invalid_user}, conversation}
     end
   end
 
-  #  def add_user(conversation, new_user_id) do
-  #    case valid_user(conversation, new_user_id) do
-  #      true ->
-  #        IO.puts("#{conversation.id}: User Already Exists.")
-  #        {{:error, :user_exists}, conversation}
-  #
-  #      false ->
-  #        IO.puts("#{conversation.id}: User Added.")
-  #        {:ok, %Conversation{conversation | user_ids: [new_user_id | conversation.user_ids]}}
-  #    end
-  #  end
-  #
-  defp valid_user(conversation = %Conversation{}, user_id) do
-    user_id == conversation.individual_user_id1 || user_id == conversation.individual_user_id2
+  def add_user(conversation, new_user_id) do
+    case ConversationUser.new(%{conversation_id: conversation.id, user_id: new_user_id}) do
+      {:ok, new_conversation_user = %ConversationUser{}} ->
+        {new_conversation_user,
+         %Conversation{
+           conversation
+           | conversation_users: [new_conversation_user | conversation.conversation_users]
+         }}
+
+      t ->
+        IO.inspect(t)
+        conversation
+    end
+  end
+
+  defp valid_user(conversation, user_id) do
+    true
   end
 end

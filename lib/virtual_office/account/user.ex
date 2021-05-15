@@ -3,6 +3,7 @@ defmodule VirtualOffice.Account.User do
   import Ecto.Changeset
 
   alias VirtualOffice.Group.Member
+  alias VirtualOffice.Communication.ConversationUser
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -15,6 +16,7 @@ defmodule VirtualOffice.Account.User do
     field :first_name, :string
     field :last_name, :string
     has_many :members, Member
+    has_many :conversation_users, ConversationUser
 
     timestamps(type: :utc_datetime_usec)
   end

@@ -25,8 +25,7 @@ defmodule VirtualOfficeWeb.ConversationController do
 
   def get_individual(conn, %{"user_id" => recipient_user_id}) do
     current_user_id = Guardian.Plug.current_resource(conn)
-
-    conversation = Communication.get__indivdual_conversation(current_user_id, recipient_user_id)
+    conversation = Communication.get_individual_conversation(current_user_id, recipient_user_id)
 
     render(conn, "get_conversation.json", conversation: conversation)
   end
