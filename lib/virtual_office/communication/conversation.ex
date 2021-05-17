@@ -18,24 +18,36 @@ defmodule VirtualOffice.Communication.Conversation do
     has_many :messages, Message
   end
 
-  @doc false
-  def changeset(conversation, attrs) do
+  def new_changeset(conversation, attrs) do
     conversation
     |> cast(attrs, [:individual])
     |> validate_required([:individual])
   end
 
+  def update_changeset(conversation, attrs) do
+    conversation
+    |> change(attrs)
+  end
+
   def new(attrs \\ %{}) do
     %Conversation{message_count: 0}
-    |> Conversation.changeset(attrs)
+    |> Conversation.new_changeset(attrs)
     |> Repo.insert!()
   end
 
-  def load_conversation(conversation_id) do
+  def load(conversation_id) do
     Repo.get(Conversation, conversation_id)
     |> Repo.preload([:messages, conversation_users: :user])
   rescue
     Ecto.Query.CastError -> nil
+  end
+
+  def save(conversation = %Conversation{}, attrs) do
+    IO.inspect(attrs)
+
+    conversation
+    |> Conversation.update_changeset(attrs)
+    |> Repo.update()
   end
 
   def get_conversation(conversation) do
@@ -47,7 +59,7 @@ defmodule VirtualOffice.Communication.Conversation do
   end
 
   def get_users(conversation) do
-    conversation.user_ids
+    conversation.conversation_users
   end
 
   def add_message(conversation, user_id, message_content) do
@@ -62,16 +74,20 @@ defmodule VirtualOffice.Communication.Conversation do
                content: message_content
              }) do
           {:ok, new_message = %Message{}} ->
+            {:ok, conversation} =
+              save(conversation, %{message_count: conversation.message_count + 1})
+
             {new_message,
              %Conversation{
                conversation
                | messages: [new_message | conversation.messages],
-                 message_count: conversation.message_count + 1
+                 message_count: conversation.message_count
              }}
 
           _ ->
             conversation
         end
+
       false ->
         IO.puts("#{conversation.id}: Invalid User.")
         {{:error, :invalid_user}, conversation}
@@ -87,13 +103,20 @@ defmodule VirtualOffice.Communication.Conversation do
            | conversation_users: [new_conversation_user | conversation.conversation_users]
          }}
 
-      t ->
-        IO.inspect(t)
+      _ ->
         conversation
     end
   end
 
-  defp valid_user(conversation, user_id) do
-    true
+  defp valid_user(conversation = %Conversation{}, user_id) do
+    Enum.find_value(
+      conversation.conversation_users,
+      false,
+      fn conversation_user ->
+        result = conversation_user.user_id == user_id
+        IO.puts(result)
+        result
+      end
+    )
   end
 end

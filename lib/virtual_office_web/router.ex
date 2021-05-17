@@ -32,6 +32,7 @@ defmodule VirtualOfficeWeb.Router do
 
     post "/associations/", AssociationController, :create
     get "/associations/:association_id", AssociationController, :get
+    post "/associations/:association_id/join", AssociationController, :join
 
     get "/conversations/:conversation_id/", ConversationController, :get
     post "/conversations/", ConversationController, :create

@@ -26,9 +26,15 @@ defmodule VirtualOffice.Group.Member do
   end
 
   def new(attrs \\ %{}) do
-    %Member{}
-    |> Member.changeset(attrs)
-    |> Repo.insert()
+    new_member =
+      %Member{}
+      |> Member.changeset(attrs)
+      |> Repo.insert()
+
+      case new_member do
+        {:ok, member} ->
+          {:ok, Repo.preload(member, :user)}
+      end
   end
 
   def save(member = %Member{}) do

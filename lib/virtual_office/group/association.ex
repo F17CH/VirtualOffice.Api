@@ -30,8 +30,12 @@ defmodule VirtualOffice.Group.Association do
   end
 
   def load_association(association_id) do
-    Repo.get(Association, association_id) |>
-    Repo.preload(:members)
+    assoc = Repo.get(Association, association_id) |>
+    Repo.preload(members: :user)
+
+    IO.inspect(assoc)
+
+    assoc
   rescue
     Ecto.Query.CastError -> :nil
   end

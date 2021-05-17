@@ -15,14 +15,14 @@ defmodule VirtualOfficeWeb.MessageController do
       {:ok, message} ->
         ConversationSpeaker.speak({:message_new, message}, conversation_id)
 
-        render(conn, "message.json", message: message)
+        render(conn, "get_message.json", message: message)
     end
   end
 
   def get_all(conn, %{"conversation_id" => conversation_id}) do
     messages = Communication.get_messages(conversation_id)
 
-    render(conn, "messages.json", messages: messages)
+    render(conn, "get_messages.json", messages: messages)
   end
 
 end

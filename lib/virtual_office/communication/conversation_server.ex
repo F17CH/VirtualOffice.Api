@@ -34,7 +34,7 @@ defmodule VirtualOffice.Communication.ConversationServer do
 
   @impl GenServer
   def init(conversation_id) do
-    case Conversation.load_conversation(conversation_id) do
+    case Conversation.load(conversation_id) do
       nil -> {:stop, {:shutdown, :invalid_conversation}}
       conversation -> {:ok, conversation, @conversation_timeout_ms}
     end
@@ -57,7 +57,7 @@ defmodule VirtualOffice.Communication.ConversationServer do
 
   @impl GenServer
   def handle_call({:get_users}, _, conversation) do
-    {:reply, Conversation.get_users(conversation), conversation}
+    {:reply, Conversation.get_users(conversation), conversation, @conversation_timeout_ms}
   end
 
   @impl GenServer
