@@ -113,9 +113,7 @@ defmodule VirtualOffice.Communication.Conversation do
       conversation.conversation_users,
       false,
       fn conversation_user ->
-        result = conversation_user.user_id == user_id
-        IO.puts(result)
-        result
+        conversation_user.user_id == user_id
       end
     )
   end
