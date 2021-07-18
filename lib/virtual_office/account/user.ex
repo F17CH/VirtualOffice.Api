@@ -23,6 +23,12 @@ defmodule VirtualOffice.Account.User do
 
   @doc false
   def changeset(user, attrs) do
+
+    IO.inspect(user)
+
+    IO.inspect(attrs)
+
+
     user
     |> cast(attrs, [:email, :password, :password_confirmation, :first_name, :last_name])
     |> validate_required([:email, :password, :password_confirmation, :first_name])

@@ -22,6 +22,8 @@ defmodule VirtualOffice.Account do
 
 
   def create_user(attrs \\ %{}) do
+    IO.inspect(attrs)
+
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
@@ -49,6 +51,10 @@ defmodule VirtualOffice.Account do
         _ ->
           {:error, :unauthorized}
     end
+  end
+
+  def token_sign_in(user) do
+        {Guardian.encode_and_sign(user, %{}, ttl: {@tokenSeconds, :seconds}), @tokenSeconds}
   end
 
   defp email_password_auth(email, password) when is_binary(email) and is_binary(password) do

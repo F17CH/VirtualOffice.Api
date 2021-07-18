@@ -15,11 +15,11 @@ defmodule VirtualOfficeWeb.UserController do
 
   alias VirtualOffice.Guardian
 
-  def create(conn, %{"user" => user_params}) do
+  def create(conn, user_params) do
     with {:ok, %User{} = user} <- Account.create_user(user_params),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+         {{:ok, token, _claims}, tokenSeconds} <- Account.token_sign_in(user) do
       conn
-      |> render("jwt.json", jwt: token)
+      |> render("jwt.json", token: token, expires_in: tokenSeconds)
     end
   end
 
@@ -32,14 +32,16 @@ defmodule VirtualOfficeWeb.UserController do
   def current(conn, _params) do
     current_user_id = Guardian.Plug.current_resource(conn)
     associations = Group.get_associations_for_user(current_user_id)
-    individual_conversations = Communication.get_individual_conversations_for_user(current_user_id)
+
+    individual_conversations =
+      Communication.get_individual_conversations_for_user(current_user_id)
 
     conn
     |> render("user_with_associations_and_conversations.json", %{
       user: Account.get_user!(current_user_id),
       associations: associations,
-      individual_conversations: individual_conversations}
-    )
+      individual_conversations: individual_conversations
+    })
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
