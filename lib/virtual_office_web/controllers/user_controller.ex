@@ -6,6 +6,8 @@ defmodule VirtualOfficeWeb.UserController do
   alias VirtualOffice.Group
   alias VirtualOffice.Communication
 
+  alias VirtualOfficeWeb.ChangesetController
+
   action_fallback VirtualOfficeWeb.FallbackController
 
   def index(conn, _params) do
@@ -20,6 +22,9 @@ defmodule VirtualOfficeWeb.UserController do
          {{:ok, token, _claims}, tokenSeconds} <- Account.token_sign_in(user) do
       conn
       |> render("jwt.json", token: token, expires_in: tokenSeconds)
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        ChangesetController.display_changeset_error(conn, changeset)
     end
   end
 
